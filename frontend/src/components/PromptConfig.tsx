@@ -4,7 +4,7 @@ export default function PromptConfig() {
   const [prompt, setPrompt] = useState("");
   const [novoPrompt, setNovoPrompt] = useState("");
   const [msg, setMsg] = useState("");
-  const apiUrl = import.meta.env.VITE_API_URL || "http://adequate-cooperation-production.up.railway.app";
+  const apiUrl = import.meta.env.VITE_API_URL || "http://agente-de-ia-production-73f7.up.railway.app";
 
   // Carregar prompt atual
   useEffect(() => {
