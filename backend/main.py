@@ -12,15 +12,11 @@ app = FastAPI()
 # CORS Middleware (sempre antes das rotas)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",  # Para dev local
-        "http://127.0.0.1:5173"
-    ],
+    allow_origins=["*"],  # Liberado para qualquer origem
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 # Registrar as rotas de CRUD
 app.include_router(qa_router)
 

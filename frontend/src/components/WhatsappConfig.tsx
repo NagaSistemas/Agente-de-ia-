@@ -9,7 +9,7 @@ export default function WhatsappConfig() {
   const [msg, setMsg] = useState("");
   const [showQr, setShowQr] = useState(false);
 
-  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8001";
+  const apiUrl = import.meta.env.VITE_API_URL || "http://adequate-cooperation-production.up.railway.app";
 
   // Checa status do WhatsApp
   const checkStatus = async () => {

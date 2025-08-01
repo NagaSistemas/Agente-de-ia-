@@ -11,7 +11,7 @@ export default function QaForm({ onAdd }: Props) {
   const [msg, setMsg] = useState("");
   const [msgType, setMsgType] = useState<"success" | "error" | "">("");
   const [loading, setLoading] = useState(false);
-  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+  const apiUrl = import.meta.env.VITE_API_URL || "http://adequate-cooperation-production.up.railway.app";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
