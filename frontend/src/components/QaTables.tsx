@@ -13,7 +13,7 @@ export default function QaTable({ }: Props) {
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const apiUrl = import.meta.env.VITE_API_URL || "http://agente-de-ia-production-73f7.up.railway.app";
+  const apiUrl = import.meta.env.VITE_API_URL || "https://agente-de-ia-production-73f7.up.railway.app";
 
   const fetchQas = async () => {
     setLoading(true);

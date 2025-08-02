@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
+import { FaCheckCircle, FaExclamationCircle, FaSyncAlt } from "react-icons/fa";
 
 type Props = {
   onAdd: () => void;
@@ -11,7 +11,12 @@ export default function QaForm({ onAdd }: Props) {
   const [msg, setMsg] = useState("");
   const [msgType, setMsgType] = useState<"success" | "error" | "">("");
   const [loading, setLoading] = useState(false);
-  const apiUrl = import.meta.env.VITE_API_URL || "http://agente-de-ia-production-73f7.up.railway.app";
+  const [reloading, setReloading] = useState(false);
+
+  // Backend principal (Python)
+  const apiUrl = import.meta.env.VITE_API_URL || "https://agente-de-ia-production-73f7.up.railway.app";
+  // URL do seu bot Node.js (ajuste se for diferente)
+  const botUrl = import.meta.env.VITE_BOT_API_URL || "https://SEU-BOT-NODE/api/reload";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,6 +41,25 @@ export default function QaForm({ onAdd }: Props) {
       setMsgType("error");
     }
     setTimeout(() => setMsg(""), 3000); // Limpa mensagem após 3s
+  };
+
+  // Função para treinar agente manualmente
+  const handleReload = async () => {
+    setReloading(true);
+    setMsg("");
+    setMsgType("");
+    try {
+      // Faz POST nos dois endpoints
+      await fetch(`${apiUrl}/reload`, { method: "POST" });
+      await fetch(botUrl, { method: "POST" });
+      setMsg("Agente treinado com sucesso!");
+      setMsgType("success");
+    } catch {
+      setMsg("Erro ao treinar agente.");
+      setMsgType("error");
+    }
+    setReloading(false);
+    setTimeout(() => setMsg(""), 3000);
   };
 
   return (
@@ -90,6 +114,25 @@ export default function QaForm({ onAdd }: Props) {
         className={`bg-blue-700 text-white rounded px-4 py-2 font-bold hover:bg-blue-900 transition disabled:opacity-60 disabled:cursor-not-allowed`}
       >
         {loading ? "Adicionando..." : "Adicionar"}
+      </button>
+      {/* Botão Treinar agente */}
+      <button
+        type="button"
+        onClick={handleReload}
+        disabled={reloading}
+        className="flex items-center gap-2 bg-green-700 text-white rounded px-4 py-2 font-bold hover:bg-green-800 transition disabled:opacity-60 disabled:cursor-not-allowed mt-2"
+      >
+        {reloading ? (
+          <>
+            <FaSyncAlt className="animate-spin" />
+            Treinando agente...
+          </>
+        ) : (
+          <>
+            <FaSyncAlt />
+            Treinar agente
+          </>
+        )}
       </button>
     </form>
   );

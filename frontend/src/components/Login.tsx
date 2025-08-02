@@ -17,7 +17,7 @@ export default function Login({ onLogin }: Props) {
     await new Promise((res) => setTimeout(res, 600));
 
     // Troque por sua regra/API real!
-    if (email === "clientemuzza@nagasisitemas.com" && password === "Muzza@2025") {
+    if (email === "clientemuzza@nagasistemas.com" && password === "Muzza@2025") {
       onLogin("token-fake");
     } else {
       setError("E-mail ou senha incorretos.");

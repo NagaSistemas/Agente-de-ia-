@@ -134,6 +134,16 @@ app.post('/api/prompt', (req, res) => {
   console.log('Prompt atualizado:', prompt);
 });
 
+// ========== Botão "Treinar Agente" ==========
+
+// Endpoint para recarregar dados locais manualmente (paliativo)
+app.post('/api/reload', (req, res) => {
+  // Aqui você pode adicionar lógica extra caso precise recarregar dados do disco
+  // No seu caso, tudo já é lido em tempo real com getPrompt()
+  console.log('Treinar agente: Reload manual solicitado.');
+  res.json({ ok: true, message: 'Reload realizado com sucesso.' });
+});
+
 const PORT = process.env.PORT || 8001;
 app.listen(PORT, () => {
   console.log('API WhatsApp ouvindo na porta ' + PORT);
