@@ -17,6 +17,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 # Registrar as rotas de CRUD
 app.include_router(qa_router)
 
@@ -26,7 +27,6 @@ index = setup_engine()
 def reload_engine():
     global index
     index = setup_engine()
-
 
 def log_pergunta_sem_resposta(pergunta, resposta):
     import csv, os
@@ -38,7 +38,6 @@ def log_pergunta_sem_resposta(pergunta, resposta):
         if not existe:
             writer.writerow(["data_hora", "pergunta", "resposta"])
         writer.writerow([datetime.now().isoformat(), pergunta, resposta])
-
 
 # Pydantic model para a pergunta
 class Query(BaseModel):
@@ -57,6 +56,12 @@ def ask(query: Query):
 
     return {"resposta": resposta}
 
+# ========== NOVO ENDPOINT PARA RELOAD MANUAL ==========
+@app.post("/reload")
+def reload():
+    reload_engine()
+    print("Agente recarregado manualmente por API.")
+    return {"ok": True}
 
 # (Opcional) Servir frontend localmente. Em produção, não precisa!
 FRONTEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../frontend"))
