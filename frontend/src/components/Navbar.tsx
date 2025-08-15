@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaUserCircle, FaRobot, FaWhatsapp, FaEdit, FaBars } from "react-icons/fa";
 
-type TabKey = "qa" | "whatsapp" | "prompt";
+type TabKey = "qa" | "whatsapp" | "prompt" | "agente";
 
 type Props = {
   onLogout: () => void;
@@ -17,6 +17,7 @@ export default function Navbar({ onLogout, tab, onTabChange }: Props) {
     { key: "qa", label: "Perguntas & Respostas", icon: <FaRobot /> },
     { key: "prompt", label: "Prompt do Assistente", icon: <FaEdit /> },
     { key: "whatsapp", label: "Configurar WhatsApp", icon: <FaWhatsapp /> },
+    { key: "agente", label: "Teste do Agente", icon: <FaRobot /> },
   ];
 
   return (
