@@ -2,8 +2,5 @@ fastapi
 uvicorn
 openai
 llama-index
-llama-index-embeddings-huggingface
 pandas
 python-dotenv
-sentence-transformers
-torch
