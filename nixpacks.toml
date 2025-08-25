@@ -4,8 +4,5 @@ nixPkgs = ["python39", "pip"]
 [phases.install]
 cmds = ["pip install -r requirements.txt"]
 
-[phases.build]
-cmds = ["echo 'Build complete'"]
-
 [start]
 cmd = "python main.py"
