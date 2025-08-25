@@ -5,4 +5,4 @@ nixPkgs = ["python39", "pip"]
 cmds = ["pip install -r requirements.txt"]
 
 [start]
-cmd = "python main.py"
+cmd = "ls -la && pwd && find . -name '*.py' && python main.py"
