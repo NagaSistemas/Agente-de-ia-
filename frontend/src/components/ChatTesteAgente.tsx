@@ -36,7 +36,7 @@ export default function ChatTesteAgente() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           pergunta: mensagem,
-          session_id: sessionId 
+          session_id: sessionId || "" 
         }),
       });
 

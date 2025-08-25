@@ -48,7 +48,7 @@ def log_pergunta_sem_resposta(pergunta, resposta):
 # Pydantic model para a pergunta
 class Query(BaseModel):
     pergunta: str
-    session_id: str = None
+    session_id: str = ""
 
 # Rota raiz para healthcheck
 @app.get("/")
@@ -62,8 +62,8 @@ sessions = set()
 @app.post("/ask")
 def ask(query: Query):
     try:
-        # Gerar session_id se não fornecido
-        if not query.session_id:
+        # Gerar session_id se não fornecido ou vazio
+        if not query.session_id or query.session_id == "":
             import uuid
             query.session_id = str(uuid.uuid4())
         
