@@ -15,37 +15,19 @@ def setup_engine():
     return qa_data
 
 def answer_with_context(qa_data, pergunta):
-    # Busca nas perguntas cadastradas
-    pergunta_lower = pergunta.lower()
-    context = ""
-    
-    # Procura por perguntas similares
-    for _, row in qa_data.iterrows():
-        if any(word in row['pergunta'].lower() for word in pergunta_lower.split() if len(word) > 2):
-            context += f"Pergunta: {row['pergunta']}\nResposta: {row['resposta']}\n\n"
-    
-    # Se não encontrou contexto, usa todas as perguntas
-    if not context:
-        for _, row in qa_data.iterrows():
-            context += f"Pergunta: {row['pergunta']}\nResposta: {row['resposta']}\n\n"
-    
     # Carregar prompt personalizado
     try:
         with open("data/prompt.txt", "r", encoding="utf-8") as f:
             prompt_personalizado = f.read().strip()
     except:
-        prompt_personalizado = "Você é Naga IA, um assistente virtual prestativo."
+        prompt_personalizado = "Você é um assistente virtual prestativo."
     
-    # Prompt completo com contexto personalizado + base de conhecimento
+    # Usar APENAS o prompt personalizado
     prompt = f"""{prompt_personalizado}
 
-## Base de Conhecimento (Perguntas e Respostas):
-{context}
+Pergunta do cliente: {pergunta}
 
-## Pergunta do usuário:
-{pergunta}
-
-## Sua resposta:"""
+Sua resposta:"""
     
     try:
         response = requests.post(
@@ -68,20 +50,10 @@ def answer_with_context(qa_data, pergunta):
             result = response.json()
             resposta_texto = result['choices'][0]['message']['content']
         else:
-            # Fallback: busca simples
-            resposta_texto = "Sistema funcionando em modo básico."
-            for _, row in qa_data.iterrows():
-                if any(word in row['pergunta'].lower() for word in pergunta_lower.split() if len(word) > 2):
-                    resposta_texto = row['resposta']
-                    break
+            resposta_texto = "Desculpe, estou com dificuldades técnicas no momento. Tente novamente em instantes."
     
     except Exception as e:
-        # Fallback: busca simples
-        resposta_texto = "Sistema funcionando em modo básico."
-        for _, row in qa_data.iterrows():
-            if any(word in row['pergunta'].lower() for word in pergunta_lower.split() if len(word) > 2):
-                resposta_texto = row['resposta']
-                break
+        resposta_texto = "Desculpe, estou com dificuldades técnicas no momento. Tente novamente em instantes."
     
     class SimpleResponse:
         def __init__(self, text):
