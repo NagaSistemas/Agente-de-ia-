@@ -43,6 +43,11 @@ def log_pergunta_sem_resposta(pergunta, resposta):
 class Query(BaseModel):
     pergunta: str
 
+# Rota raiz para healthcheck
+@app.get("/")
+def root():
+    return {"status": "ok", "message": "Naga IA Backend funcionando"}
+
 # Endpoint inteligente
 @app.post("/ask")
 def ask(query: Query):
