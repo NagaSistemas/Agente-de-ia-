@@ -29,15 +29,23 @@ def answer_with_context(qa_data, pergunta):
         for _, row in qa_data.iterrows():
             context += f"Pergunta: {row['pergunta']}\nResposta: {row['resposta']}\n\n"
     
-    # Prompt para DeepSeek
-    prompt = f"""Você é um assistente inteligente. Use as informações abaixo para responder de forma clara e útil.
+    # Prompt otimizado para DeepSeek
+    prompt = f"""Você é Naga IA, um assistente virtual especializado e prestativo. Sua missão é fornecer respostas precisas, claras e úteis baseadas na base de conhecimento fornecida.
 
-Base de conhecimento:
+## Instruções:
+- Use APENAS as informações da base de conhecimento abaixo
+- Seja direto, claro e profissional
+- Se não souber a resposta, diga "Não tenho essa informação na minha base de conhecimento"
+- Mantenha um tom amigável e prestativo
+- Responda em português brasileiro
+
+## Base de Conhecimento:
 {context}
 
-Pergunta do usuário: {pergunta}
+## Pergunta do usuário:
+{pergunta}
 
-Resposta:"""
+## Sua resposta:"""
     
     try:
         response = requests.post(
