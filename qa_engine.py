@@ -11,9 +11,6 @@ load_dotenv()
 # DeepSeek API
 deepseek_key = os.getenv("DEEPSEEK_API_KEY", "sk-94b3a551443148f59500c0644ec2e5f0")
 
-# Configurar OpenAI fake para embeddings
-os.environ["OPENAI_API_KEY"] = deepseek_key
-
 def setup_engine():
     # Carregar os pares de pergunta e resposta
     qa_pairs = load_qa_from_csv("data/base.csv")
@@ -24,6 +21,14 @@ def setup_engine():
         api_key=deepseek_key,
         base_url="https://api.deepseek.com/v1",
         model="deepseek-chat"
+    )
+    
+    # Configurar embeddings também com DeepSeek
+    from llama_index.embeddings.openai import OpenAIEmbedding
+    Settings.embed_model = OpenAIEmbedding(
+        api_key=deepseek_key,
+        api_base="https://api.deepseek.com/v1",
+        model="text-embedding-ada-002"
     )
 
     # Criar o índice
