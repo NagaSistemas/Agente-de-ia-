@@ -1,6 +1,6 @@
 import os
+import requests
 from dotenv import load_dotenv
-from llama_index.llms.openai import OpenAI
 import pandas as pd
 from loader import load_qa_from_csv
 
@@ -15,38 +15,68 @@ def setup_engine():
     return qa_data
 
 def answer_with_context(qa_data, pergunta):
-    # Busca simples por texto
+    # Busca nas perguntas cadastradas
     pergunta_lower = pergunta.lower()
+    context = ""
     
     # Procura por perguntas similares
-    matches = []
     for _, row in qa_data.iterrows():
-        if any(word in row['pergunta'].lower() for word in pergunta_lower.split()):
-            matches.append(f"Pergunta: {row['pergunta']}\nResposta: {row['resposta']}")
+        if any(word in row['pergunta'].lower() for word in pergunta_lower.split() if len(word) > 2):
+            context += f"Pergunta: {row['pergunta']}\nResposta: {row['resposta']}\n\n"
     
-    # Se não encontrou matches, usa toda a base
-    if not matches:
-        matches = [f"Pergunta: {row['pergunta']}\nResposta: {row['resposta']}" for _, row in qa_data.iterrows()]
+    # Se não encontrou contexto, usa todas as perguntas
+    if not context:
+        for _, row in qa_data.iterrows():
+            context += f"Pergunta: {row['pergunta']}\nResposta: {row['resposta']}\n\n"
     
-    context = "\n\n".join(matches[:5])  # Limita a 5 matches
+    # Prompt para DeepSeek
+    prompt = f"""Você é um assistente inteligente. Use as informações abaixo para responder de forma clara e útil.
+
+Base de conhecimento:
+{context}
+
+Pergunta do usuário: {pergunta}
+
+Resposta:"""
     
-    prompt = (
-        "Você é um assistente inteligente. Use as informações abaixo para responder.\n"
-        "Se não souber, diga que não sabe.\n\n"
-        f"{context}\n\n"
-        f"Pergunta do usuário: {pergunta}\n"
-        "Resposta:"
-    )
+    try:
+        response = requests.post(
+            "https://api.deepseek.com/chat/completions",
+            headers={
+                "Authorization": f"Bearer {deepseek_key}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "model": "deepseek-chat",
+                "messages": [
+                    {"role": "user", "content": prompt}
+                ],
+                "max_tokens": 500,
+                "temperature": 0.7
+            }
+        )
+        
+        if response.status_code == 200:
+            result = response.json()
+            resposta_texto = result['choices'][0]['message']['content']
+        else:
+            # Fallback: busca simples
+            resposta_texto = "Sistema funcionando em modo básico."
+            for _, row in qa_data.iterrows():
+                if any(word in row['pergunta'].lower() for word in pergunta_lower.split() if len(word) > 2):
+                    resposta_texto = row['resposta']
+                    break
     
-    llm = OpenAI(
-        api_key=deepseek_key,
-        base_url="https://api.deepseek.com/v1",
-        model="gpt-3.5-turbo"
-    )
+    except Exception as e:
+        # Fallback: busca simples
+        resposta_texto = "Sistema funcionando em modo básico."
+        for _, row in qa_data.iterrows():
+            if any(word in row['pergunta'].lower() for word in pergunta_lower.split() if len(word) > 2):
+                resposta_texto = row['resposta']
+                break
     
     class SimpleResponse:
         def __init__(self, text):
             self.text = text
     
-    resposta = llm.complete(prompt)
-    return SimpleResponse(str(resposta))
+    return SimpleResponse(resposta_texto)
