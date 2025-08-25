@@ -30,7 +30,20 @@ client.on('qr', (qr) => {
   require('qrcode').toDataURL(qr, (err, url) => {
     qrCodeBase64 = url;
     connected = false;
-    console.log('Novo QR code disponível!');
+    console.log('Novo QR code disponível! Válido por ~40 segundos');
+    
+    // Limpar QR code após 35 segundos (antes de expirar)
+    setTimeout(() => {
+      if (!connected) {
+        console.log('QR Code expirado, gerando novo...');
+        // Forçar nova inicialização para gerar novo QR
+        client.destroy().then(() => {
+          setTimeout(() => {
+            client.initialize();
+          }, 2000);
+        });
+      }
+    }, 35000);
   });
   qrcode.generate(qr, { small: true });
 });
@@ -99,10 +112,20 @@ app.get('/api/whatsapp/status', (req, res) => {
 
 // QR Code (caso não conectado)
 app.get('/api/whatsapp/qrcode', (req, res) => {
-  if (!connected && qrCodeBase64) {
+  if (connected) {
+    res.status(400).json({ message: "Já conectado." });
+  } else if (qrCodeBase64) {
     res.json({ qrCode: qrCodeBase64 });
   } else {
-    res.status(404).json({ message: "Já conectado ou QR code não disponível." });
+    // Se não tem QR code, forçar geração
+    if (client.info) {
+      // Cliente já inicializado, apenas aguardar
+      res.status(202).json({ message: "QR code sendo gerado, aguarde..." });
+    } else {
+      // Inicializar cliente se necessário
+      client.initialize();
+      res.status(202).json({ message: "Inicializando WhatsApp, aguarde..." });
+    }
   }
 });
 

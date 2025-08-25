@@ -26,8 +26,8 @@ export default function WhatsappConfig() {
 
   useEffect(() => {
     checkStatus();
-    // Polling para atualizar status
-    const interval = setInterval(checkStatus, 6000);
+    // Polling para atualizar status (mais frequente quando conectando)
+    const interval = setInterval(checkStatus, status === "connecting" ? 3000 : 8000);
     return () => clearInterval(interval);
     // eslint-disable-next-line
   }, []);
@@ -37,18 +37,45 @@ export default function WhatsappConfig() {
     setShowQr(true);
     setStatus("connecting");
     setMsg("");
-    try {
-      const resp = await fetch(`${apiUrl}/api/whatsapp/qrcode`);
-      if (resp.ok) {
-        const data = await resp.json();
-        setQrCode(data.qrCode);
-      } else {
-        setMsg("QR Code ainda não gerado, aguarde alguns segundos e tente novamente.");
-        setQrCode(null);
+    
+    // Polling para buscar QR code
+    const fetchQrCode = async () => {
+      try {
+        const resp = await fetch(`${apiUrl}/api/whatsapp/qrcode`);
+        if (resp.ok) {
+          const data = await resp.json();
+          setQrCode(data.qrCode);
+          return true;
+        } else {
+          return false;
+        }
+      } catch {
+        return false;
       }
-    } catch {
-      setMsg("Erro ao buscar QR Code.");
-      setQrCode(null);
+    };
+    
+    // Tenta buscar QR code imediatamente
+    const success = await fetchQrCode();
+    if (!success) {
+      setMsg("Gerando QR Code, aguarde...");
+      
+      // Polling a cada 2 segundos por até 30 segundos
+      let attempts = 0;
+      const maxAttempts = 15;
+      
+      const interval = setInterval(async () => {
+        attempts++;
+        const success = await fetchQrCode();
+        
+        if (success) {
+          clearInterval(interval);
+          setMsg("");
+        } else if (attempts >= maxAttempts) {
+          clearInterval(interval);
+          setMsg("Timeout: QR Code não foi gerado. Tente novamente.");
+          setQrCode(null);
+        }
+      }, 2000);
     }
   };
 
