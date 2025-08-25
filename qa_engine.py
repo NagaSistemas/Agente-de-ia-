@@ -41,12 +41,19 @@ def answer_with_context(qa_data, pergunta, primeira_mensagem=False):
     if primeira_mensagem:
         instrucao_extra = f"\n\nIMPORTANTE: Esta é a PRIMEIRA mensagem da conversa. Use a saudação '{saudacao}' e apresente-se conforme as instruções."
     else:
-        instrucao_extra = f"\n\nIMPORTANTE: Esta NÃO é a primeira mensagem. NÃO se apresente novamente. Use '{saudacao}' se necessário e responda diretamente à pergunta."
+        instrucao_extra = "\n\nIMPORTANTE: Esta NÃO é a primeira mensagem. NÃO se apresente novamente. NÃO use saudações como 'Boa noite'. Responda diretamente à pergunta de forma natural."
     
     # Usar prompt personalizado com instrução
-    prompt = f"""{prompt_personalizado}{instrucao_extra}
+    if primeira_mensagem:
+        prompt = f"""{prompt_personalizado}{instrucao_extra}
 
 Horário atual em Brasília: {agora.strftime('%H:%M')} ({saudacao})
+
+Pergunta do cliente: {pergunta}
+
+Sua resposta:"""
+    else:
+        prompt = f"""{prompt_personalizado}{instrucao_extra}
 
 Pergunta do cliente: {pergunta}
 
