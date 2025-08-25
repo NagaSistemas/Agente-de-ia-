@@ -11,6 +11,9 @@ load_dotenv()
 # DeepSeek API
 deepseek_key = os.getenv("DEEPSEEK_API_KEY", "sk-94b3a551443148f59500c0644ec2e5f0")
 
+# Configurar OpenAI fake para embeddings
+os.environ["OPENAI_API_KEY"] = deepseek_key
+
 def setup_engine():
     # Carregar os pares de pergunta e resposta
     qa_pairs = load_qa_from_csv("data/base.csv")
@@ -22,9 +25,6 @@ def setup_engine():
         base_url="https://api.deepseek.com/v1",
         model="deepseek-chat"
     )
-    
-    # Usar embeddings locais simples
-    Settings.embed_model = "local"
 
     # Criar o índice
     index = VectorStoreIndex.from_documents(documents)
