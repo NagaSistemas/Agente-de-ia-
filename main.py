@@ -56,15 +56,13 @@ def root():
 # Endpoint inteligente
 @app.post("/ask")
 def ask(query: Query):
-    resposta_obj = answer_with_context(qa_data, query.pergunta)
-    # Acesse o texto!
-    resposta = str(resposta_obj.text) if hasattr(resposta_obj, "text") else str(resposta_obj)
-
-    # Checagem para log de perguntas sem resposta
-    if "não sei" in resposta.lower() or "não tenho resposta" in resposta.lower():
-        log_pergunta_sem_resposta(query.pergunta, resposta)
-
-    return {"resposta": resposta}
+    try:
+        resposta_obj = answer_with_context(qa_data, query.pergunta)
+        resposta = str(resposta_obj.text) if hasattr(resposta_obj, "text") else str(resposta_obj)
+        return {"resposta": resposta}
+    except Exception as e:
+        print(f"Erro no /ask: {e}")
+        return {"resposta": "Erro interno do servidor. Tente novamente."}
 
 # ========== NOVO ENDPOINT PARA RELOAD MANUAL ==========
 @app.post("/reload")
