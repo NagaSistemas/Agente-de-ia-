@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings
 from llama_index.llms.openai import OpenAI
 from llama_index.core.schema import Document
+from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
 from loader import load_qa_from_csv
 
@@ -21,6 +22,11 @@ def setup_engine():
         api_key=deepseek_key,
         base_url="https://api.deepseek.com/v1",
         model="deepseek-chat"
+    )
+    
+    # Configuração de embeddings locais
+    Settings.embed_model = HuggingFaceEmbedding(
+        model_name="sentence-transformers/all-MiniLM-L6-v2"
     )
 
     # Criar o índice
