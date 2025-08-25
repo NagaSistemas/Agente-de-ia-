@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaUserCircle, FaWhatsapp, FaEdit, FaBars, FaQuestionCircle, FaComments, FaSignOutAlt } from "react-icons/fa";
 
-type TabKey = "qa" | "whatsapp" | "prompt" | "agente";
+type TabKey = "whatsapp" | "prompt" | "agente";
 
 type Props = {
   onLogout: () => void;
@@ -14,7 +14,6 @@ export default function Navbar({ onLogout, tab, onTabChange }: Props) {
   const [menuMobile, setMenuMobile] = useState(false);
 
   const menus = [
-    { key: "qa", label: "Perguntas & Respostas", icon: <FaQuestionCircle />, description: "Gerenciar base de conhecimento" },
     { key: "prompt", label: "Prompt do Assistente", icon: <FaEdit />, description: "Configurar comportamento" },
     { key: "whatsapp", label: "Configurar WhatsApp", icon: <FaWhatsapp />, description: "Integração WhatsApp" },
     { key: "agente", label: "Teste do Agente", icon: <FaComments />, description: "Testar conversações" },

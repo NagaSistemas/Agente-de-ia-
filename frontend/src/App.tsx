@@ -1,20 +1,19 @@
 import { useState } from "react";
 import Login from "./components/Login";
-import QaTable from "./components/QaTables";
-import QaForm from "./components/QaForms";
+
 import Navbar from "./components/Navbar";
 import WhatsappConfig from "./components/WhatsappConfig";
 import PromptConfig from "./components/PromptConfig";
 import ChatTesteAgente from "./components/ChatTesteAgente";
 import "./App.css";
 
-// TabKey deve incluir "agente" que representa o teste do bot
-type TabKey = "qa" | "whatsapp" | "prompt" | "agente";
+// TabKey para as abas disponíveis
+type TabKey = "whatsapp" | "prompt" | "agente";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [reload, setReload] = useState(0);
-  const [tab, setTab] = useState<TabKey>("qa");
+  const [tab, setTab] = useState<TabKey>("prompt");
 
   const handleLogin = (tk: string) => {
     setToken(tk);
@@ -32,7 +31,6 @@ function App() {
 
   const getTabTitle = () => {
     switch (tab) {
-      case "qa": return "Perguntas & Respostas";
       case "whatsapp": return "Configurar WhatsApp";
       case "prompt": return "Prompt do Assistente";
       case "agente": return "Teste do Agente";
@@ -42,7 +40,6 @@ function App() {
 
   const getTabDescription = () => {
     switch (tab) {
-      case "qa": return "Gerencie a base de conhecimento do seu bot";
       case "whatsapp": return "Configure a integração com WhatsApp";
       case "prompt": return "Defina o comportamento e personalidade do assistente";
       case "agente": return "Teste as conversações do seu bot";
@@ -69,13 +66,6 @@ function App() {
         {/* Container do conteúdo */}
         <div className="flex-1 animate-slide-up">
           <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-200/50 p-6 md:p-8 min-h-[600px] transition-all duration-300 hover:shadow-2xl">
-            {tab === "qa" && (
-              <div className="space-y-8">
-                <QaForm onAdd={() => setReload(reload + 1)} />
-                <QaTable key={reload} token={token} />
-              </div>
-            )}
-
             {tab === "whatsapp" && <WhatsappConfig />}
             {tab === "prompt" && <PromptConfig />}
             {tab === "agente" && <ChatTesteAgente />}
