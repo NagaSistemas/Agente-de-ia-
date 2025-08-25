@@ -45,10 +45,12 @@ def log_pergunta_sem_resposta(pergunta, resposta):
             writer.writerow(["data_hora", "pergunta", "resposta"])
         writer.writerow([datetime.now().isoformat(), pergunta, resposta])
 
+from typing import Optional
+
 # Pydantic model para a pergunta
 class Query(BaseModel):
     pergunta: str
-    session_id: str = ""
+    session_id: Optional[str] = None
 
 # Rota raiz para healthcheck
 @app.get("/")
