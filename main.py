@@ -53,22 +53,25 @@ class Query(BaseModel):
 def root():
     return {"status": "ok", "message": "Naga IA Backend funcionando"}
 
-# Endpoint inteligente
+# Endpoint de teste simples
 @app.post("/ask")
 def ask(query: Query):
+    return {"resposta": f"Recebi sua pergunta: {query.pergunta}. Sistema funcionando!"}
+
+# Endpoint inteligente (desabilitado temporariamente)
+@app.post("/ask-ai")
+def ask_ai(query: Query):
     try:
         resposta_obj = answer_with_context(qa_data, query.pergunta)
         resposta = str(resposta_obj.text) if hasattr(resposta_obj, "text") else str(resposta_obj)
         return {"resposta": resposta}
     except Exception as e:
-        print(f"Erro no /ask: {e}")
-        return {"resposta": "Erro interno do servidor. Tente novamente."}
+        return {"resposta": f"Erro: {str(e)}"}
 
 # ========== NOVO ENDPOINT PARA RELOAD MANUAL ==========
 @app.post("/reload")
 def reload():
     reload_engine()
-    print("Agente recarregado manualmente por API.")
     return {"ok": True}
 
 # (Opcional) Servir frontend localmente. Em produção, não precisa!
