@@ -53,20 +53,18 @@ class Query(BaseModel):
 def root():
     return {"status": "ok", "message": "Naga IA Backend funcionando"}
 
-# Endpoint de teste simples
+# Endpoint inteligente
 @app.post("/ask")
 def ask(query: Query):
-    return {"resposta": f"Recebi sua pergunta: {query.pergunta}. Sistema funcionando!"}
-
-# Endpoint inteligente (desabilitado temporariamente)
-@app.post("/ask-ai")
-def ask_ai(query: Query):
     try:
         resposta_obj = answer_with_context(qa_data, query.pergunta)
         resposta = str(resposta_obj.text) if hasattr(resposta_obj, "text") else str(resposta_obj)
         return {"resposta": resposta}
     except Exception as e:
-        return {"resposta": f"Erro: {str(e)}"}
+        # Fallback simples se a IA falhar
+        return {"resposta": f"Desculpe, não consegui processar sua pergunta no momento. Erro: {str(e)[:100]}"}
+
+
 
 # ========== NOVO ENDPOINT PARA RELOAD MANUAL ==========
 @app.post("/reload")
