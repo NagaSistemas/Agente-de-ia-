@@ -15,6 +15,21 @@ def setup_engine():
     return qa_data
 
 def answer_with_context(qa_data, pergunta, primeira_mensagem=False):
+    # Obter horário de Brasília
+    from datetime import datetime
+    import pytz
+    
+    brasilia_tz = pytz.timezone('America/Sao_Paulo')
+    agora = datetime.now(brasilia_tz)
+    hora = agora.hour
+    
+    if 5 <= hora < 12:
+        saudacao = "Bom dia"
+    elif 12 <= hora < 18:
+        saudacao = "Boa tarde"
+    else:
+        saudacao = "Boa noite"
+    
     # Carregar prompt personalizado
     try:
         with open("data/prompt.txt", "r", encoding="utf-8") as f:
@@ -22,14 +37,16 @@ def answer_with_context(qa_data, pergunta, primeira_mensagem=False):
     except:
         prompt_personalizado = "Você é um assistente virtual prestativo."
     
-    # Adicionar instrução sobre primeira mensagem
+    # Adicionar instrução sobre primeira mensagem e horário
     if primeira_mensagem:
-        instrucao_extra = "\n\nIMPORTANTE: Esta é a PRIMEIRA mensagem da conversa. Apresente-se conforme as instruções."
+        instrucao_extra = f"\n\nIMPORTANTE: Esta é a PRIMEIRA mensagem da conversa. Use a saudação '{saudacao}' e apresente-se conforme as instruções."
     else:
-        instrucao_extra = "\n\nIMPORTANTE: Esta NÃO é a primeira mensagem. NÃO se apresente novamente. Responda diretamente à pergunta."
+        instrucao_extra = f"\n\nIMPORTANTE: Esta NÃO é a primeira mensagem. NÃO se apresente novamente. Use '{saudacao}' se necessário e responda diretamente à pergunta."
     
     # Usar prompt personalizado com instrução
     prompt = f"""{prompt_personalizado}{instrucao_extra}
+
+Horário atual em Brasília: {agora.strftime('%H:%M')} ({saudacao})
 
 Pergunta do cliente: {pergunta}
 
