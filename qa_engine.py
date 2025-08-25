@@ -14,7 +14,7 @@ def setup_engine():
     qa_data = load_qa_from_csv("data/base.csv")
     return qa_data
 
-def answer_with_context(qa_data, pergunta):
+def answer_with_context(qa_data, pergunta, primeira_mensagem=False):
     # Carregar prompt personalizado
     try:
         with open("data/prompt.txt", "r", encoding="utf-8") as f:
@@ -22,8 +22,14 @@ def answer_with_context(qa_data, pergunta):
     except:
         prompt_personalizado = "Você é um assistente virtual prestativo."
     
-    # Usar APENAS o prompt personalizado
-    prompt = f"""{prompt_personalizado}
+    # Adicionar instrução sobre primeira mensagem
+    if primeira_mensagem:
+        instrucao_extra = "\n\nIMPORTANTE: Esta é a PRIMEIRA mensagem da conversa. Apresente-se conforme as instruções."
+    else:
+        instrucao_extra = "\n\nIMPORTANTE: Esta NÃO é a primeira mensagem. NÃO se apresente novamente. Responda diretamente à pergunta."
+    
+    # Usar prompt personalizado com instrução
+    prompt = f"""{prompt_personalizado}{instrucao_extra}
 
 Pergunta do cliente: {pergunta}
 

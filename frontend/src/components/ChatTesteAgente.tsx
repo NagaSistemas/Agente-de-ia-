@@ -8,7 +8,8 @@ type Mensagem = {
 export default function ChatTesteAgente() {
   const [mensagem, setMensagem] = useState("");
   const [historico, setHistorico] = useState<Mensagem[]>([]);
-  const [erro, setErro] = useState<string | null>(null); // Estado de erro para exibir no chat
+  const [erro, setErro] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const chatRef = useRef<HTMLDivElement>(null);
 
   // Scroll automático ao adicionar novas mensagens
@@ -33,7 +34,10 @@ export default function ChatTesteAgente() {
       const res = await fetch("https://agente-de-ia-production-8869.up.railway.app/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pergunta: mensagem }),
+        body: JSON.stringify({ 
+          pergunta: mensagem,
+          session_id: sessionId 
+        }),
       });
 
       if (!res.ok) {
@@ -43,6 +47,11 @@ export default function ChatTesteAgente() {
 
       const data = await res.json();
       console.log("Resposta recebida:", data);
+
+      // Salvar session_id se for a primeira mensagem
+      if (data.session_id && !sessionId) {
+        setSessionId(data.session_id);
+      }
 
       // Extrair o texto da resposta corretamente
       let respostaTexto = data.resposta;
