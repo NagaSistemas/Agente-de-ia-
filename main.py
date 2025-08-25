@@ -30,9 +30,10 @@ app.include_router(qa_router)
 qa_data = setup_engine()
 
 def reload_engine():
-    global qa_data, sessions
+    global qa_data, sessions, conversation_history
     qa_data = setup_engine()
     sessions.clear()  # Limpar sessões ao recarregar
+    conversation_history.clear()  # Limpar históricos
 
 def log_pergunta_sem_resposta(pergunta, resposta):
     import csv, os
@@ -57,8 +58,9 @@ class Query(BaseModel):
 def root():
     return {"status": "ok", "message": "Naga IA Backend funcionando"}
 
-# Sistema de sessões para controlar primeira mensagem
+# Sistema de sessões para controlar primeira mensagem e histórico
 sessions = set()
+conversation_history = {}
 
 # Endpoint inteligente
 @app.post("/ask")
@@ -72,11 +74,27 @@ def ask(query: Query):
         # Verificar se é primeira mensagem da sessão
         primeira_mensagem = query.session_id not in sessions
         
+        # Inicializar histórico se for nova sessão
+        if query.session_id not in conversation_history:
+            conversation_history[query.session_id] = []
+        
         # Adicionar sessão ao conjunto
         sessions.add(query.session_id)
         
-        resposta_obj = answer_with_context(qa_data, query.pergunta, primeira_mensagem)
+        # Obter histórico da conversa
+        historico = conversation_history[query.session_id]
+        
+        resposta_obj = answer_with_context(qa_data, query.pergunta, primeira_mensagem, historico)
         resposta = str(resposta_obj.text) if hasattr(resposta_obj, "text") else str(resposta_obj)
+        
+        # Adicionar pergunta e resposta ao histórico
+        conversation_history[query.session_id].append(f"Cliente: {query.pergunta}")
+        conversation_history[query.session_id].append(f"Atendente: {resposta}")
+        
+        # Limitar histórico a últimas 10 mensagens
+        if len(conversation_history[query.session_id]) > 10:
+            conversation_history[query.session_id] = conversation_history[query.session_id][-10:]
+        
         return {"resposta": resposta, "session_id": query.session_id}
     except Exception as e:
         return {"resposta": f"Desculpe, não consegui processar sua pergunta no momento. Erro: {str(e)[:100]}"}

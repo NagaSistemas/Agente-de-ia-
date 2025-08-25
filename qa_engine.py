@@ -14,7 +14,7 @@ def setup_engine():
     qa_data = load_qa_from_csv("data/base.csv")
     return qa_data
 
-def answer_with_context(qa_data, pergunta, primeira_mensagem=False):
+def answer_with_context(qa_data, pergunta, primeira_mensagem=False, historico=[]):
     # Obter horário de Brasília
     from datetime import datetime
     import pytz
@@ -43,19 +43,24 @@ def answer_with_context(qa_data, pergunta, primeira_mensagem=False):
     else:
         instrucao_extra = "\n\nIMPORTANTE: Esta NÃO é a primeira mensagem. NÃO se apresente novamente. NÃO use saudações como 'Boa noite'. Responda diretamente à pergunta de forma natural."
     
+    # Montar histórico da conversa
+    historico_texto = ""
+    if historico:
+        historico_texto = "\n\nHistórico da conversa:\n" + "\n".join(historico[-6:])  # Últimas 6 mensagens
+    
     # Usar prompt personalizado com instrução
     if primeira_mensagem:
         prompt = f"""{prompt_personalizado}{instrucao_extra}
 
-Horário atual em Brasília: {agora.strftime('%H:%M')} ({saudacao})
+Horário atual em Brasília: {agora.strftime('%H:%M')} ({saudacao}){historico_texto}
 
-Pergunta do cliente: {pergunta}
+Pergunta atual do cliente: {pergunta}
 
 Sua resposta:"""
     else:
-        prompt = f"""{prompt_personalizado}{instrucao_extra}
+        prompt = f"""{prompt_personalizado}{instrucao_extra}{historico_texto}
 
-Pergunta do cliente: {pergunta}
+Pergunta atual do cliente: {pergunta}
 
 Sua resposta:"""
     
