@@ -11,7 +11,7 @@ deepseek_key = os.getenv("DEEPSEEK_API_KEY", "sk-94b3a551443148f59500c0644ec2e5f
 
 def setup_engine():
     # Carrega dados do CSV
-    qa_data = load_qa_from_csv()
+    qa_data = load_qa_from_csv("data/base.csv")
     return qa_data
 
 def answer_with_context(qa_data, pergunta):
