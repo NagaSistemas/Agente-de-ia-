@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaUserCircle, FaWhatsapp, FaEdit, FaBars, FaQuestionCircle, FaComments, FaSignOutAlt } from "react-icons/fa";
+import { FaUserCircle, FaWhatsapp, FaEdit, FaBars, FaComments, FaSignOutAlt } from "react-icons/fa";
 
 type TabKey = "whatsapp" | "prompt" | "agente";
 

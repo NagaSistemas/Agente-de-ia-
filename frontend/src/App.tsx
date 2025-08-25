@@ -12,7 +12,6 @@ type TabKey = "whatsapp" | "prompt" | "agente";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
-  const [reload, setReload] = useState(0);
   const [tab, setTab] = useState<TabKey>("prompt");
 
   const handleLogin = (tk: string) => {
