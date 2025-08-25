@@ -66,6 +66,25 @@ def ask(query: Query):
 
 
 
+# ========== ENDPOINTS PARA PROMPT PERSONALIZADO ==========
+@app.get("/api/prompt")
+def get_prompt():
+    try:
+        with open("data/prompt.txt", "r", encoding="utf-8") as f:
+            prompt = f.read().strip()
+    except:
+        prompt = "Você é um assistente virtual prestativo. Responda de forma clara e útil."
+    return {"prompt": prompt}
+
+@app.post("/api/prompt")
+def save_prompt(data: dict):
+    try:
+        with open("data/prompt.txt", "w", encoding="utf-8") as f:
+            f.write(data["prompt"])
+        return {"ok": True}
+    except:
+        return {"ok": False}
+
 # ========== NOVO ENDPOINT PARA RELOAD MANUAL ==========
 @app.post("/reload")
 def reload():
