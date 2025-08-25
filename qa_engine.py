@@ -41,7 +41,7 @@ def answer_with_context(qa_data, pergunta):
     llm = OpenAI(
         api_key=deepseek_key,
         base_url="https://api.deepseek.com/v1",
-        model="deepseek-chat"
+        model="gpt-3.5-turbo"
     )
     
     class SimpleResponse:
