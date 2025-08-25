@@ -12,7 +12,12 @@ app = FastAPI()
 # CORS Middleware (sempre antes das rotas)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Liberado para qualquer origem
+    allow_origins=[
+        "*",
+        "https://lightgrey-lyrebird-872902.hostingersite.com",
+        "http://localhost:3000",
+        "http://localhost:5173"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
