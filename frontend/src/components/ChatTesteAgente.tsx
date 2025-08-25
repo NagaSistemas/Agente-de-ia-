@@ -30,7 +30,7 @@ export default function ChatTesteAgente() {
     setErro(null);
 
     try {
-      const res = await fetch("https://agente-de-ia-production-73f7.up.railway.app/ask", {
+      const res = await fetch("https://agente-de-ia-production-8869.up.railway.app/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ pergunta: mensagem }),

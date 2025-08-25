@@ -14,7 +14,7 @@ export default function QaForm({ onAdd }: Props) {
   const [reloading, setReloading] = useState(false);
 
   // Backend principal (Python)
-  const apiUrl = import.meta.env.VITE_API_URL || "https://agente-de-ia-production-73f7.up.railway.app";
+  const apiUrl = import.meta.env.VITE_API_URL || "https://agente-de-ia-production-8869.up.railway.app";
   // URL do seu bot Node.js (ajuste se for diferente)
   const botUrl = import.meta.env.VITE_BOT_API_URL || "https://SEU-BOT-NODE/api/reload";
 

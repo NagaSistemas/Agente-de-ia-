@@ -26,12 +26,12 @@ app.add_middleware(
 # Registrar as rotas de CRUD
 app.include_router(qa_router)
 
-# Carrega o index (engine) do RAG
-index = setup_engine()
+# Carrega os dados do CSV
+qa_data = setup_engine()
 
 def reload_engine():
-    global index
-    index = setup_engine()
+    global qa_data
+    qa_data = setup_engine()
 
 def log_pergunta_sem_resposta(pergunta, resposta):
     import csv, os
@@ -56,7 +56,7 @@ def root():
 # Endpoint inteligente
 @app.post("/ask")
 def ask(query: Query):
-    resposta_obj = answer_with_context(index, query.pergunta)
+    resposta_obj = answer_with_context(qa_data, query.pergunta)
     # Acesse o texto!
     resposta = str(resposta_obj.text) if hasattr(resposta_obj, "text") else str(resposta_obj)
 
